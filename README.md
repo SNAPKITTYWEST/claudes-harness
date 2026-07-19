@@ -3,7 +3,8 @@
   <img src="docs/badges/version.svg" alt="version"/>
   <img src="docs/badges/license-ssl.svg" alt="license: SSL v1.0"/>
   <img src="docs/badges/license-apache.svg" alt="license: Apache 2.0"/>
-  <img src="docs/badges/language.svg" alt="language: Prolog"/>
+  <img src="docs/badges/language.svg" alt="language: Prolog + Rust"/>
+  <img src="docs/badges/tokio.svg" alt="async: tokio"/>
   <img src="docs/badges/worm.svg" alt="WORM sealed"/>
 </p>
 
