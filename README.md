@@ -1,6 +1,10 @@
 <!-- BADGES -->
 <p align="center">
-  <img src="docs/badges.svg" alt="badges"/>
+  <img src="docs/badges/version.svg" alt="version"/>
+  <img src="docs/badges/license-ssl.svg" alt="license: SSL v1.0"/>
+  <img src="docs/badges/license-apache.svg" alt="license: Apache 2.0"/>
+  <img src="docs/badges/language.svg" alt="language: Prolog"/>
+  <img src="docs/badges/worm.svg" alt="WORM sealed"/>
 </p>
 
 <h1 align="center">Claude's Harness for Any AI Model</h1>
