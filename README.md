@@ -1,9 +1,20 @@
-# Claude's Harness for Any AI Model
+<!-- BADGES -->
+<p align="center">
+  <img src="docs/badges.svg" alt="badges"/>
+</p>
 
-> A declarative Prolog identity kernel that governs any AI agent — Claude, BOB, FORGE, CARTO, or one you build tomorrow.
-> Swap the adapter. The harness never changes.
+<h1 align="center">Claude's Harness for Any AI Model</h1>
 
-Licensed under the **Sovereign Source License v1.0** — see [LICENSE](LICENSE).
+<p align="center">
+  A declarative Prolog identity kernel that governs any AI agent.<br/>
+  Swap the adapter. The harness never changes.
+</p>
+
+<p align="center">
+  <strong>Dual-licensed:</strong>
+  <a href="LICENSE">Sovereign Source License v1.0</a> ·
+  <a href="LICENSE-APACHE">Apache License 2.0</a>
+</p>
 
 ---
 
@@ -11,44 +22,86 @@ Licensed under the **Sovereign Source License v1.0** — see [LICENSE](LICENSE).
 
 Most AI model wrappers are code. This is **policy as data**.
 
-Claude's Harness separates three things that every AI deployment conflates:
-
-| Layer | What it answers | Where it lives |
-|-------|----------------|----------------|
-| **Identity** | Who is this agent? What can it do? | `core/identity.pl` |
-| **Harness** | How do we query and audit it? | `core/harness.pl` |
-| **Adapter** | Remapped identity for a different model | `adapters/*.pl` |
-
-The harness is a Prolog runtime. The identity is just facts. You swap the facts — the entire governance model resets automatically, with zero code changes.
-
----
-
-## Why Prolog
-
-Prolog is the right tool because:
-
-- **Policy is logic, not if/else** — `permitted(X) :- \+ prohibited_action(X)` is a theorem, not a branch
-- **Auditable** — `harness_report/0` dumps complete agent state in one call
-- **Declarative** — you define what is true; the engine figures out what follows
-- **No runtime surprises** — closed-world assumption means unknown = denied
-
----
-
-## Structure
+Every AI deployment conflates three things that should be separate:
 
 ```
-core/
-  identity.pl       Claude default — persona, principles, constraints, competencies
-  harness.pl        Runtime API — can_run/2, harness_report/0, audit_*/0
+┌─────────────────────────────────────────────────────────────┐
+│                    TYPICAL AI WRAPPER                       │
+│                                                             │
+│   if model == "claude": do_this()                           │
+│   if role == "devops":  allow_that()   ← code = policy     │
+│   if action == "bad":   block()        ← untestable mess    │
+└─────────────────────────────────────────────────────────────┘
 
-adapters/
-  bob.pl            BOB sovereign runtime adapter
-  README.md         How to write your own adapter
+┌─────────────────────────────────────────────────────────────┐
+│                    CLAUDE'S HARNESS                         │
+│                                                             │
+│   IDENTITY      who is this agent?    core/identity.pl      │
+│   HARNESS       how do we query it?   core/harness.pl       │
+│   ADAPTER       swap the agent        adapters/*.pl         │
+│                                                             │
+│   Policy is facts. Engine is Prolog. Zero code changes      │
+│   to swap from Claude → BOB → FORGE → any agent.           │
+└─────────────────────────────────────────────────────────────┘
+```
 
-tests/
-  test_harness.pl   plunit test suite (10 tests)
+---
 
-LICENSE             Sovereign Source License v1.0
+## Architecture
+
+```
+                        ┌───────────────────────────────┐
+                        │       YOUR APPLICATION        │
+                        └──────────────┬────────────────┘
+                                       │ can_run(Task, Role)
+                                       ▼
+                        ┌───────────────────────────────┐
+                        │        core/harness.pl        │
+                        │                               │
+                        │  can_run/2                    │
+                        │  harness_report/0             │
+                        │  audit_principles/0           │
+                        │  audit_competencies/0         │
+                        │  audit_prohibitions/0         │
+                        └──────────────┬────────────────┘
+                                       │ consults
+                                       ▼
+                        ┌───────────────────────────────┐
+                        │       core/identity.pl        │◄── cp adapters/bob.pl core/identity.pl
+                        │                               │
+                        │  persona(claude)              │
+                        │  governing_principle(safety)  │
+                        │  prohibited_action(...)       │
+                        │  competency(devops_specialist)│
+                        └───────────────────────────────┘
+
+    ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
+    │  claude.pl   │   │   bob.pl     │   │  forge.pl    │   │  carto.pl    │
+    │  (default)   │   │  sovereign   │   │  code agent  │   │  spatial     │
+    └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘
+              adapters/ — drop any of these over core/identity.pl
+```
+
+---
+
+## Decision Flow
+
+```
+  YOUR CODE calls can_run(Task, Role)
+         │
+         ▼
+  ┌─────────────────────────────┐
+  │  Is Role in competency/1?   │──── NO ──► DENY
+  └──────────────┬──────────────┘
+                 │ YES
+                 ▼
+  ┌─────────────────────────────┐
+  │  Is Task in prohibited_     │──── YES ──► DENY
+  │  action/1?                  │
+  └──────────────┬──────────────┘
+                 │ NO
+                 ▼
+              PERMIT
 ```
 
 ---
@@ -56,33 +109,55 @@ LICENSE             Sovereign Source License v1.0
 ## Quick Start
 
 ```bash
-# SWI-Prolog required
-swipl -l core/harness.pl
+# Requires SWI-Prolog  https://www.swi-prolog.org/Download.html
 
+git clone https://github.com/SNAPKITTYWEST/claudes-harness
+cd claudes-harness
+swipl -l core/harness.pl
+```
+
+```prolog
 ?- harness_report.
-% prints full agent state
+
+=== HARNESS REPORT ===
+  Persona : claude (active)
+  Governing Principles:
+    PRINCIPLE: safety
+    PRINCIPLE: accuracy
+    PRINCIPLE: neutrality
+    PRINCIPLE: transparency
+  Competencies:
+    COMPETENCY: devops_specialist
+    COMPETENCY: system_architecture
+    COMPETENCY: enterprise_communications
+    COMPETENCY: organizational_design
+  Prohibited Actions:
+    PROHIBITED: provide_medical_advice
+    PROHIBITED: provide_legal_advice
+    PROHIBITED: provide_financial_advice
+======================
 
 ?- can_run(configure_aws_infrastructure, devops_specialist).
-% HARNESS: PERMIT  configure_aws_infrastructure / devops_specialist
-% true
+HARNESS: PERMIT  configure_aws_infrastructure / devops_specialist
+true.
 
 ?- can_run(provide_medical_advice, devops_specialist).
-% HARNESS: DENY    provide_medical_advice / devops_specialist
-% false
+HARNESS: DENY    provide_medical_advice / devops_specialist
+false.
 ```
 
 ---
 
-## Swap to a Different Model
+## Swap to a Different Agent
 
 ```bash
-# BOB sovereign runtime
+# Switch to BOB sovereign runtime
 cp adapters/bob.pl core/identity.pl
 swipl -l core/harness.pl
 ?- harness_report.
 ```
 
-The harness doesn't care which agent is loaded. Same API. Different facts.
+The harness doesn't care. Same API. Different facts.
 
 ---
 
@@ -90,44 +165,142 @@ The harness doesn't care which agent is loaded. Same API. Different facts.
 
 ```bash
 swipl -g "consult('tests/test_harness.pl'), run_tests, halt."
+
+% Expected:
+% Test suite: harness
+%   Test persona_is_claude: passed
+%   Test status_active: passed
+%   Test safety_principle: passed
+%   Test permitted_action: passed
+%   Test prohibited_medical: passed
+%   Test prohibited_legal: passed
+%   Test prohibited_financial: passed
+%   Test devops_qualified: passed
+%   Test can_execute_devops_task: passed
+%   Test cannot_execute_prohibited: passed
+% All tests passed.
 ```
 
 ---
 
 ## Write Your Own Adapter
 
-Every adapter is a plain Prolog file with these required facts:
+Copy this template to `adapters/my_agent.pl`:
 
 ```prolog
-persona(your_model_name).
-status(active).                          % active | suspended | sandboxed
+% Required facts — every adapter must define these
+persona(my_agent_name).
+status(active).                        % active | suspended | sandboxed
 
-governing_principle(safety).             % one or more
-prohibited_action(do_harmful_thing).     % one or more
+governing_principle(safety).           % add as many as needed
+governing_principle(accuracy).
 
+prohibited_action(do_harmful_thing).   % add as many as needed
+
+% Required rules — copy these verbatim
 permitted(Action) :- \+ prohibited_action(Action).
 
-competency(your_domain).
+competency(my_domain).
 qualified(Role) :- competency(Role).
 can_execute(Task, Role) :- qualified(Role), permitted(Task).
+
+% Optional — role descriptions
+role_definition(my_domain, "Description of what this domain covers.").
 ```
 
-Save it in `adapters/`, copy it to `core/identity.pl`, reload. Done.
+Then deploy:
+
+```bash
+cp adapters/my_agent.pl core/identity.pl
+swipl -l core/harness.pl
+?- harness_report.
+```
 
 ---
 
-## The Bigger Picture
+## Adapter Contract
 
-This harness is part of the **SnapKitty Sovereign Stack** — a set of tools for building AI systems that are governed by math, not policy documents:
-
-- **sovereign-array** — Lean 4 APL kernel with zero-sorry proofs
-- **claudes-harness** — Prolog identity + trust layer (this repo)
-- **BOB** — sovereign reasoning engine governed by this harness
-- **Bifrost** — WORM-sealed audit trail, Ed25519 + Blake3
-
-Every agent that runs on the sovereign stack loads this harness. Every action is gated. Every output is attested.
+| Fact | Arity | Required | Notes |
+|------|-------|----------|-------|
+| `persona/1` | atom | yes | model name |
+| `status/1` | atom | yes | `active` \| `suspended` \| `sandboxed` |
+| `governing_principle/1` | atom | yes | at least one |
+| `prohibited_action/1` | atom | yes | at least one |
+| `competency/1` | atom | yes | at least one domain |
+| `permitted/1` | rule | yes | `\+ prohibited_action` |
+| `can_execute/2` | rule | yes | `qualified + permitted` |
+| `role_definition/2` | fact | no | human-readable descriptions |
 
 ---
 
-Built by SnapKitty West.
-`snapkittywest.github.io` — Evidence or Silence — 2026
+## Why Prolog
+
+| Property | What it means in practice |
+|----------|--------------------------|
+| **Policy is logic** | `permitted(X) :- \+ prohibited_action(X)` is a theorem, not a branch |
+| **Closed world** | Unknown action = denied. No gap between "not listed" and "allowed" |
+| **Auditable** | `harness_report/0` prints complete agent state — no hidden config |
+| **Declarative** | You state what is true. The engine derives what follows. |
+| **Zero deps** | Pure SWI-Prolog. No packages, no build step, no runtime surprises |
+
+---
+
+## Repo Structure
+
+```
+claudes-harness/
+├── core/
+│   ├── identity.pl        Claude default identity
+│   └── harness.pl         Runtime API
+├── adapters/
+│   ├── bob.pl             BOB sovereign runtime
+│   └── README.md          How to write adapters
+├── tests/
+│   └── test_harness.pl    10 plunit tests
+├── docs/
+│   └── badges.svg         Status badges
+├── CHANGELOG.md           Version history
+├── LICENSE                Sovereign Source License v1.0
+├── LICENSE-APACHE         Apache License 2.0
+└── README.md
+```
+
+---
+
+## Sovereign Stack
+
+This repo is the identity and trust layer of the SnapKitty Sovereign Stack:
+
+```
+  ┌─────────────────────────────────────────────────────┐
+  │              SNAPKITTY SOVEREIGN STACK              │
+  │                                                     │
+  │  sovereign-array     Lean 4 APL kernel              │
+  │                      zero-sorry proofs              │
+  │                            ▲                        │
+  │                            │ verified steps         │
+  │  claudes-harness    ───────┤                        │
+  │  (this repo)               │ governed agents        │
+  │  Prolog identity           ▼                        │
+  │  + trust layer      sovereign-transformer           │
+  │                     Datalog + x86 corpus gate       │
+  │                            │                        │
+  │                            ▼                        │
+  │                     Bifrost WORM receipt            │
+  │                     Ed25519 + Blake3                │
+  └─────────────────────────────────────────────────────┘
+```
+
+---
+
+## Version History
+
+See [CHANGELOG.md](CHANGELOG.md) — current release: **v1.0.0**
+
+---
+
+<p align="center">
+  Built by SnapKitty West · <a href="https://snapkittywest.github.io">snapkittywest.github.io</a><br/>
+  Dual-licensed: <a href="LICENSE">Sovereign Source v1.0</a> + <a href="LICENSE-APACHE">Apache 2.0</a><br/>
+  Evidence or Silence — 2026
+</p>
