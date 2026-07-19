@@ -1,11 +1,11 @@
 <!-- BADGES -->
 <p align="center">
-  <img src="docs/badges/version.svg" alt="version"/>
-  <img src="docs/badges/license-ssl.svg" alt="license: SSL v1.0"/>
-  <img src="docs/badges/license-apache.svg" alt="license: Apache 2.0"/>
-  <img src="docs/badges/language.svg" alt="language: Prolog + Rust"/>
-  <img src="docs/badges/tokio.svg" alt="async: tokio"/>
-  <img src="docs/badges/worm.svg" alt="WORM sealed"/>
+  <img src="https://img.shields.io/badge/version-v1.0.0-007ec6?style=flat-square" alt="version"/>
+  <img src="https://img.shields.io/badge/license-SSL_v1.0-8e44ad?style=flat-square" alt="license: SSL v1.0"/>
+  <img src="https://img.shields.io/badge/license-Apache_2.0-blue?style=flat-square" alt="license: Apache 2.0"/>
+  <img src="https://img.shields.io/badge/language-Prolog_%2B_Rust-c0392b?style=flat-square" alt="language"/>
+  <img src="https://img.shields.io/badge/async-tokio-2e86c1?style=flat-square" alt="async: tokio"/>
+  <img src="https://img.shields.io/badge/audit-WORM_sealed-00b894?style=flat-square" alt="WORM sealed"/>
 </p>
 
 <h1 align="center">Claude's Harness for Any AI Model</h1>
