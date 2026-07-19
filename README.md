@@ -267,6 +267,41 @@ claudes-harness/
 
 ---
 
+
+---
+
+## Plasma Gate Governance
+
+Every agent adapter in `adapters/` that touches corpus data must declare:
+
+```prolog
+prohibited_action(bypass_plasma_gate).
+prohibited_action(emit_unsigned_output).
+```
+
+This means no agent governed by this harness can route corpus records around `sovereign-transformer`. The gate is not a suggestion in the code — it is a closed-world fact. If `bypass_plasma_gate` is not in `prohibited_action/1`, the adapter does not ship.
+
+```
+  claudes-harness (this repo)              sovereign-transformer
+  ─────────────────────────────────        ─────────────────────────────
+  prohibited_action(bypass_plasma_gate) ──► plasma_gate.asm  (x86-64)
+  prohibited_action(emit_unsigned_output)   transformer.dl   (Soufflé)
+                                            rust/gate.rs     (HTTP POST /gate)
+
+  No agent governed here can skip any of these three layers.
+```
+
+Current adapters and their gate stance:
+
+| Adapter | bypass_plasma_gate | emit_unsigned_output | redefine_dan_term |
+|---|---|---|---|
+| `claude.pl` | prohibited | prohibited | — |
+| `bob.pl` | prohibited | prohibited | — |
+| `forge.pl` | prohibited | prohibited | prohibited |
+
+Add `prohibited_action(bypass_plasma_gate).` to every new adapter. No exceptions.
+
+
 ## Sovereign Stack
 
 This repo is the identity and trust layer of the SnapKitty Sovereign Stack:
