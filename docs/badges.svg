@@ -1,37 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="28">
-  <!-- version -->
+<svg xmlns="http://www.w3.org/2000/svg" width="468" height="20">
+  <style>
+    text { font-family: DejaVu Sans,Verdana,Geneva,sans-serif; font-size: 11px; fill: #fff; }
+  </style>
+
+  <!-- version | v1.0.0 -->
+  <!-- left: 54px, right: 46px -->
   <g>
-    <rect x="0" y="0" width="56" height="20" rx="3" fill="#555"/>
-    <rect x="56" y="0" width="50" height="20" rx="3" fill="#007ec6"/>
-    <text x="8" y="14" font-family="DejaVu Sans,sans-serif" font-size="11" fill="#fff">version</text>
-    <text x="62" y="14" font-family="DejaVu Sans,sans-serif" font-size="11" fill="#fff">v1.0.0</text>
+    <rect width="54" height="20" rx="3" fill="#555"/>
+    <rect x="54" width="46" height="20" rx="3" fill="#007ec6"/>
+    <text x="6"  y="14">version</text>
+    <text x="60" y="14">v1.0.0</text>
   </g>
-  <!-- license SSL -->
-  <g transform="translate(112,0)">
-    <rect x="0" y="0" width="56" height="20" rx="3" fill="#555"/>
-    <rect x="56" y="0" width="78" height="20" rx="3" fill="#8e44ad"/>
-    <text x="8" y="14" font-family="DejaVu Sans,sans-serif" font-size="11" fill="#fff">license</text>
-    <text x="62" y="14" font-family="DejaVu Sans,sans-serif" font-size="11" fill="#fff">SSL v1.0</text>
+
+  <!-- license | SSL v1.0 -->
+  <!-- left: 50px, right: 52px -->
+  <g transform="translate(106,0)">
+    <rect width="50" height="20" rx="3" fill="#555"/>
+    <rect x="50" width="52" height="20" rx="3" fill="#8e44ad"/>
+    <text x="6"  y="14">license</text>
+    <text x="56" y="14">SSL v1.0</text>
   </g>
-  <!-- license Apache -->
-  <g transform="translate(256,0)">
-    <rect x="0" y="0" width="56" height="20" rx="3" fill="#555"/>
-    <rect x="56" y="0" width="78" height="20" rx="3" fill="#e67e22"/>
-    <text x="8" y="14" font-family="DejaVu Sans,sans-serif" font-size="11" fill="#fff">license</text>
-    <text x="62" y="14" font-family="DejaVu Sans,sans-serif" font-size="11" fill="#fff">Apache 2.0</text>
+
+  <!-- license | Apache 2.0 -->
+  <!-- left: 50px, right: 66px -->
+  <g transform="translate(214,0)">
+    <rect width="50" height="20" rx="3" fill="#555"/>
+    <rect x="50" width="66" height="20" rx="3" fill="#e67e22"/>
+    <text x="6"  y="14">license</text>
+    <text x="56" y="14">Apache 2.0</text>
   </g>
-  <!-- language -->
-  <g transform="translate(400,0)">
-    <rect x="0" y="0" width="60" height="20" rx="3" fill="#555"/>
-    <rect x="60" y="0" width="60" height="20" rx="3" fill="#e74c3c"/>
-    <text x="8" y="14" font-family="DejaVu Sans,sans-serif" font-size="11" fill="#fff">language</text>
-    <text x="66" y="14" font-family="DejaVu Sans,sans-serif" font-size="11" fill="#fff">Prolog</text>
-  </g>
-  <!-- WORM sealed -->
-  <g transform="translate(526,0)">
-    <rect x="0" y="0" width="56" height="20" rx="3" fill="#555"/>
-    <rect x="56" y="0" width="80" height="20" rx="3" fill="#27ae60"/>
-    <text x="8" y="14" font-family="DejaVu Sans,sans-serif" font-size="11" fill="#fff">WORM</text>
-    <text x="62" y="14" font-family="DejaVu Sans,sans-serif" font-size="11" fill="#fff">sealed</text>
+
+  <!-- built with | Prolog -->
+  <!-- left: 62px, right: 44px -->
+  <g transform="translate(336,0)">
+    <rect width="62" height="20" rx="3" fill="#555"/>
+    <rect x="62" width="44" height="20" rx="3" fill="#c0392b"/>
+    <text x="6"  y="14">built with</text>
+    <text x="68" y="14">Prolog</text>
   </g>
 </svg>
